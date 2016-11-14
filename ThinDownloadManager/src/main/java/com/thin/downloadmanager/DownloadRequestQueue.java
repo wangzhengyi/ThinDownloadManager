@@ -87,6 +87,17 @@ public class DownloadRequestQueue {
 				}
 			});
 		}
+
+		public void postDownloadStart(final DownloadRequest request, final long contentLength) {
+			mCallBackExecutor.execute(new Runnable() {
+				@Override
+				public void run() {
+					if (request.getStatusListener() != null) {
+						request.getStatusListener().onStart(request, contentLength);
+					}
+				}
+			});
+		}
 	}
 
 	/**
