@@ -226,13 +226,23 @@ public class DownloadDispatcher extends Thread {
                 e.printStackTrace();
             }
 
-            File destinationFile = new File(mRequest.getDestinationURI().getPath().toString());
+            File destinationFile = new File(mRequest.getDestinationURI().getPath());
 
             boolean errorCreatingDestinationFile = false;
             // Create destination file if it doesn't exists
-            if (destinationFile.exists() == false) {
+            if (!destinationFile.exists()) {
                 try {
-                    if (destinationFile.createNewFile() == false) {
+                    File destinationDir = new File(destinationFile.getParent());
+                    if (!destinationDir.exists()) {
+                        boolean res = destinationDir.mkdirs();
+                        if (!res) {
+                            errorCreatingDestinationFile = true;
+                            updateDownloadFailed(DownloadManager.ERROR_FILE_ERROR,
+                                    "Error in creating destination file");
+                        }
+                    }
+
+                    if (!destinationFile.createNewFile()) {
                         errorCreatingDestinationFile = true;
                         updateDownloadFailed(DownloadManager.ERROR_FILE_ERROR,
                                 "Error in creating destination file");
@@ -246,7 +256,7 @@ public class DownloadDispatcher extends Thread {
             }
 
             // If Destination file couldn't be created. Abort the data transfer.
-            if (errorCreatingDestinationFile == false) {
+            if (!errorCreatingDestinationFile) {
                 try {
                     out = new FileOutputStream(destinationFile, true);
                     outFd = ((FileOutputStream) out).getFD();
