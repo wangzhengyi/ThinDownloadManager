@@ -1,8 +1,5 @@
 package com.thin.downloadmanager;
 
-/**
- * Created by maniselvaraj on 15/4/15.
- */
 public class DefaultRetryPolicy implements RetryPolicy {
 
     /** The current timeout in milliseconds. */
